@@ -9,6 +9,7 @@
     <link href="<?php echo base_url('assets/css/datepicker3.css'); ?>" rel="stylesheet">
     <link href="<?php echo base_url('assets/css/bootstrap-table.css'); ?>" rel="stylesheet">
     <link href="<?php echo base_url('assets/css/styles.css'); ?>" rel="stylesheet"></head>
+	<link href="<?php echo base_url('assets/css/sweetalert2.min.css'); ?>" rel="stylesheet">
 <body>
     <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
 		<div class="container-fluid">
