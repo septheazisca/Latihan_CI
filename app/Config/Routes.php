@@ -41,3 +41,11 @@ $routes->post('/admin/simpan-rak', 'Admin::simpan_data_rak');
 $routes->get('/admin/edit-data-rak/(:alphanum)', 'Admin::edit_data_rak/$1');
 $routes->post('/admin/update-rak', 'Admin::update_data_rak');
 $routes->get('/admin/hapus-data-rak/(:alphanum)', 'Admin::hapus_data_rak/$1');
+
+// Routes untuk module kategori
+$routes->get('/admin/master-data-kategori', 'Admin::master_data_kategori');
+$routes->get('/admin/input-data-kategori', 'Admin::input_data_kategori');
+$routes->post('/admin/simpan-kategori', 'Admin::simpan_data_kategori');
+$routes->get('/admin/edit-data-kategori/(:alphanum)', 'Admin::edit_data_kategori/$1');
+$routes->post('/admin/update-kategori', 'Admin::update_data_kategori');
+$routes->get('/admin/hapus-data-kategori/(:alphanum)', 'Admin::hapus_data_kategori/$1');

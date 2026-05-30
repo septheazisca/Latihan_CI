@@ -26,6 +26,11 @@
 						<span class="glyphicon glyphicon-share-alt"></span> Data Rak
 					</a>
 				</li>
+				<li>
+					<a href="<?= base_url('admin/master-data-kategori'); ?>">
+						<span class="glyphicon glyphicon-share-alt"></span> Data Kategori
+					</a>
+				</li>
 			</ul>
 		</li>
 		<li role="presentation" class="divider"></li>
