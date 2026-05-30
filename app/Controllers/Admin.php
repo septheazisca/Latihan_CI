@@ -8,6 +8,16 @@ use App\Models\anggotaModels;
 use App\Models\rakModels;
 use App\Models\KategoriModels;
 use App\Models\BukuModels;
+use App\Models\PeminjamanModels;
+
+use Endroid\QrCode\QrCode;
+use Endroid\QrCode\Writer\PngWriter;
+use Endroid\QrCode\Logo\Logo;
+use Endroid\QrCode\Label\Label;
+use Endroid\QrCode\Encoding\Encoding;
+use Endroid\QrCode\ErrorCorrectionLevel;
+use Endroid\QrCode\RoundBlockSizeMode;
+use Endroid\QrCode\Color\Color;
 
 class Admin extends BaseController
 {
@@ -807,13 +817,13 @@ class Admin extends BaseController
             $coverBuku  = $this->request->getFile('cover_buku');
             $ext1       = $coverBuku->getClientExtension();
             $namaFile1  = "Cover-Buku-".date("ymdHis").".".$ext1;
-            $coverBuku->move('Assets/CoverBuku', $namaFile1);
+            $coverBuku->move(FCPATH.'Assets/CoverBuku', $namaFile1);
 
             // Upload e-book
             $eBook     = $this->request->getFile('e_book');
             $ext2      = $eBook->getClientExtension();
             $namaFile2 = "E-Book-".date("ymdHis").".".$ext2;
-            $eBook->move('Assets/E-Book', $namaFile2);
+            $eBook->move(FCPATH.'Assets/E-Book', $namaFile2);
 
             // Auto number
             $hasil = $modelBuku->autoNumber()->getRowArray();
@@ -925,7 +935,7 @@ class Admin extends BaseController
                 // Upload file baru
                 $ext1      = $coverBuku->getClientExtension();
                 $namaFile1 = "Cover-Buku-".date("ymdHis").".".$ext1;
-                $coverBuku->move('Assets/CoverBuku', $namaFile1);
+                $coverBuku->move(FCPATH.'Assets/CoverBuku', $namaFile1);
             }
 
             // Cek apakah e-book diganti
@@ -945,7 +955,7 @@ class Admin extends BaseController
                 // Upload file baru
                 $ext2      = $eBook->getClientExtension();
                 $namaFile2 = "E-Book-".date("ymdHis").".".$ext2;
-                $eBook->move('Assets/E-Book', $namaFile2);
+                $eBook->move(FCPATH.'Assets/E-Book', $namaFile2);
             }
 
             $dataUpdate = [
@@ -997,4 +1007,239 @@ class Admin extends BaseController
         <script>document.location = "<?= base_url('admin/master-buku');?>";</script>
         <?php
     }
+
+    
+    // ===================== TRANSAKSI PEMINJAMAN =====================
+
+    public function data_transaksi_peminjaman()
+    {
+        if(session()->get('ses_id')=='' or session()->get('ses_user')=='' or session()->get('ses_level')==''){
+            session()->setFlashdata('error','Silakan login terlebih dahulu!');
+            ?>
+            <script>document.location = "<?= base_url('admin/login-admin');?>";</script>
+            <?php
+        } else {
+            $modelPeminjaman = new PeminjamanModels();
+            $dataPeminjaman  = $modelPeminjaman->getDataPeminjamanJoin()->getResultArray();
+
+            $uri  = service('uri');
+            $page = $uri->getSegment(2);
+
+            $data['page']            = $page;
+            $data['web_title']       = "Data Transaksi Peminjaman";
+            $data['dataPeminjaman']  = $dataPeminjaman;
+
+            echo view('Backend/Template/header', $data);
+            echo view('Backend/Template/sidebar', $data);
+            echo view('Backend/Transaksi/data-transaksi-peminjaman', $data);
+            echo view('Backend/Template/footer', $data);
+        }
+    }
+
+    public function peminjaman_step1()
+    {
+        if(session()->get('ses_id')=='' or session()->get('ses_user')=='' or session()->get('ses_level')==''){
+            session()->setFlashdata('error','Silakan login terlebih dahulu!');
+            ?>
+            <script>document.location = "<?= base_url('admin/login-admin');?>";</script>
+            <?php
+        } else {
+            $uri  = service('uri');
+            $page = $uri->getSegment(2);
+
+            $data['page']      = $page;
+            $data['web_title'] = "Transaksi Peminjaman";
+
+            echo view('Backend/Template/header', $data);
+            echo view('Backend/Template/sidebar', $data);
+            echo view('Backend/Transaksi/peminjaman-step-1', $data);
+            echo view('Backend/Template/footer', $data);
+        }
+    }
+
+    public function peminjaman_step2()
+    {
+        if(session()->get('ses_id')=='' or session()->get('ses_user')=='' or session()->get('ses_level')==''){
+            session()->setFlashdata('error','Silakan login terlebih dahulu!');
+            ?>
+            <script>document.location = "<?= base_url('admin/login-admin');?>";</script>
+            <?php
+        } else {
+            $modelAnggota    = new anggotaModels();
+            $modelBuku       = new BukuModels();
+            $modelPeminjaman = new PeminjamanModels();
+            $uri             = service('uri');
+            $page            = $uri->getSegment(2);
+
+            if($this->request->getPost('id_anggota')){
+                $idAnggota = $this->request->getPost('id_anggota');
+                session()->set(['idAgt' => $idAnggota]);
+            } else {
+                $idAnggota = session()->get('idAgt');
+            }
+
+            $cekPeminjaman = $modelPeminjaman->getDataPeminjaman(['id_anggota' => $idAnggota, 'status_transaksi' => 'Berjalan'])->getNumRows();
+            if($cekPeminjaman > 0){
+                session()->setFlashdata('error','Transaksi Tidak Dapat Dilakukan, Masih Ada Transaksi Peminjaman yang Belum Diselesaikan!!');
+                ?>
+                <script>history.go(-1);</script>
+                <?php
+            } else {
+                $dataAnggota = $modelAnggota->getDataAnggota(['id_anggota' => $idAnggota])->getRowArray();
+                $dataBuku    = $modelBuku->getDataBukuJoin()->getResultArray();
+
+                $jumlahTemp  = $modelPeminjaman->getDataTemp(['id_anggota' => $idAnggota])->getNumRows();
+                $dataTemp    = $modelPeminjaman->getDataTempJoin(['tbl_temp_peminjaman.id_anggota' => $idAnggota])->getResultArray();
+
+                $data['page']         = $page;
+                $data['web_title']    = "Transaksi Peminjaman";
+                $data['dataAnggota']  = $dataAnggota;
+                $data['dataBuku']     = $dataBuku;
+                $data['jumlahTemp']   = $jumlahTemp;
+                $data['dataTemp']     = $dataTemp;
+
+                echo view('Backend/Template/header', $data);
+                echo view('Backend/Template/sidebar', $data);
+                echo view('Backend/Transaksi/peminjaman-step-2', $data);
+                echo view('Backend/Template/footer', $data);
+            }
+        }
+    }
+
+    public function simpan_temp_pinjam()
+    {
+        $modelPeminjaman = new PeminjamanModels();
+        $modelBuku       = new BukuModels();
+
+        $uri      = service('uri');
+        $idBuku   = $uri->getSegment(3);
+        $dataBuku = $modelBuku->getDataBuku(['sha1(id_buku)' => $idBuku])->getRowArray();
+
+        $adaTemp      = $modelPeminjaman->getDataTemp(['sha1(id_buku)' => $idBuku])->getNumRows();
+        $adaBerjalan  = $modelPeminjaman->getDataPeminjaman(['id_anggota' => session()->get('idAgt'), 'status_transaksi' => 'Berjalan'])->getNumRows();
+
+        if($adaTemp){
+            session()->setFlashdata('error','Satu Anggota Hanya Bisa Meminjam 1 Buku dengan Judul yang Sama!');
+            ?>
+            <script>history.go(-1);</script>
+            <?php
+        } elseif($adaBerjalan){
+            session()->setFlashdata('error','Masih ada transaksi peminjaman yang belum diselesaikan, silakan selesaikan peminjaman sebelumnya terlebih dahulu!');
+            ?>
+            <script>history.go(-1);</script>
+            <?php
+        } else {
+            $dataSimpanTemp = [
+                'id_anggota'   => session()->get('idAgt'),
+                'id_buku'      => $dataBuku['id_buku'],
+                'jumlah_temp'  => '1'
+            ];
+            $modelPeminjaman->saveDataTemp($dataSimpanTemp);
+
+            $stok        = $dataBuku['jumlah_eksemplar'] - 1;
+            $dataUpdate  = ['jumlah_eksemplar' => $stok];
+            $modelBuku->updateDataBuku($dataUpdate, ['sha1(id_buku)' => $idBuku]);
+            ?>
+            <script>document.location = "<?= base_url('admin/peminjaman-step-2');?>";</script>
+            <?php
+        }
+    }
+
+    public function hapus_peminjaman()
+    {
+        $modelPeminjaman = new PeminjamanModels();
+        $modelBuku       = new BukuModels();
+
+        $uri    = service('uri');
+        $idBuku = $uri->getSegment(3);
+
+        $dataBuku = $modelBuku->getDataBuku(['sha1(id_buku)' => $idBuku])->getRowArray();
+
+        $modelPeminjaman->hapusDataTemp(['sha1(id_buku)' => $idBuku, 'id_anggota' => session()->get('idAgt')]);
+
+        $stok       = $dataBuku['jumlah_eksemplar'] + 1;
+        $dataUpdate = ['jumlah_eksemplar' => $stok];
+        $modelBuku->updateDataBuku($dataUpdate, ['sha1(id_buku)' => $idBuku]);
+        ?>
+        <script>document.location = "<?= base_url('admin/peminjaman-step-2');?>";</script>
+        <?php
+    }
+
+    public function simpan_transaksi_peminjaman()
+    {
+        if(session()->get('ses_id')=='' or session()->get('ses_user')=='' or session()->get('ses_level')==''){
+            session()->setFlashdata('error','Silakan login terlebih dahulu!');
+            ?>
+            <script>document.location = "<?= base_url('admin/login-admin');?>";</script>
+            <?php
+        } else {
+            $modelPeminjaman = new PeminjamanModels();
+
+            $idPeminjaman  = date("ymdHis");
+            $time_sekarang = time();
+            $kembali       = date("Y-m-d", strtotime("+7 days", $time_sekarang));
+            $jumlahPinjam  = $modelPeminjaman->getDataTemp(['id_anggota' => session()->get('idAgt')])->getNumRows();
+
+            $dataQR  = $idPeminjaman;
+            $labelQR = $idPeminjaman;
+
+            $qrCode = new QrCode(
+                data: $dataQR,
+                encoding: new Encoding('UTF-8'),
+                errorCorrectionLevel: ErrorCorrectionLevel::High,
+                size: 300,
+                margin: 10,
+                roundBlockSizeMode: RoundBlockSizeMode::Margin,
+            );
+
+            $logo = new Logo(
+                path: FCPATH.'Assets/logo_ubsi.png',
+                resizeToWidth: 50,
+                punchoutBackground: true
+            );
+
+            $label = new Label(
+                text: $labelQR,
+                textColor: new Color(255, 0, 0)
+            );
+
+            $writer = new PngWriter();
+            $result = $writer->write($qrCode, $logo, $label);
+
+            $namaQR = "qr_".$idPeminjaman.".png";
+            $result->saveToFile(FCPATH.'Assets/qr_code/'.$namaQR);
+
+            $dataSimpan = [
+                'no_peminjaman'     => $idPeminjaman,
+                'id_anggota'        => session()->get('idAgt'),
+                'tgl_pinjam'        => date("Y-m-d"),
+                'total_pinjam'      => $jumlahPinjam,
+                'id_admin'          => session()->get('ses_id'),
+                'status_transaksi'  => 'Berjalan',
+                'status_ambil_buku' => 'Sudah Diambil',
+                'qr_code'           => $namaQR
+            ];
+            $modelPeminjaman->saveDataPeminjaman($dataSimpan);
+
+            $dataTemp = $modelPeminjaman->getDataTemp(['id_anggota' => session()->get('idAgt')])->getResultArray();
+            foreach($dataTemp as $sementara){
+                $simpanDetail = [
+                    'no_peminjaman' => $idPeminjaman,
+                    'id_buku'       => $sementara['id_buku'],
+                    'status_pinjam' => 'Sedang Dipinjam',
+                    'perpanjangan'  => '2',
+                    'tgl_kembali'   => $kembali
+                ];
+                $modelPeminjaman->saveDataDetail($simpanDetail);
+            }
+
+            $modelPeminjaman->hapusDataTemp(['id_anggota' => session()->get('idAgt')]);
+            session()->remove('idAgt');
+            session()->setFlashdata('success','Data Peminjaman Buku Berhasil Disimpan!');
+            ?>
+            <script>document.location = "<?= base_url('admin/data-transaksi-peminjaman');?>";</script>
+            <?php
+        }
+    }
+
 }
