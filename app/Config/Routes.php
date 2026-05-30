@@ -49,3 +49,11 @@ $routes->post('/admin/simpan-kategori', 'Admin::simpan_data_kategori');
 $routes->get('/admin/edit-data-kategori/(:alphanum)', 'Admin::edit_data_kategori/$1');
 $routes->post('/admin/update-kategori', 'Admin::update_data_kategori');
 $routes->get('/admin/hapus-data-kategori/(:alphanum)', 'Admin::hapus_data_kategori/$1');
+
+// Routes untuk module buku
+$routes->get('/admin/master-buku', 'Admin::master_buku');
+$routes->get('/admin/edit-buku/(:alphanum)', 'Admin::edit_buku/$1');
+$routes->post('/admin/update-buku', 'Admin::update_buku');
+$routes->get('/admin/hapus-buku/(:alphanum)', 'Admin::hapus_buku/$1');
+$routes->get('/admin/input-buku', 'Admin::input_buku');
+$routes->post('/admin/simpan-buku', 'Admin::simpan_buku');

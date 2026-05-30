@@ -33,6 +33,8 @@
 				</li>
 			</ul>
 		</li>
+		<li><a href="<?= base_url('admin/master-buku'); ?>">
+				<span class="glyphicon glyphicon-book"></span> Data Buku</a>
 		<li role="presentation" class="divider"></li>
 		<li>
 			<a href="<?= base_url('admin/logout'); ?>">
