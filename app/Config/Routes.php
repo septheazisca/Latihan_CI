@@ -34,3 +34,10 @@ $routes->get('/admin/edit-data-anggota/(:alphanum)', 'Admin::edit_data_anggota/$
 $routes->post('/admin/update-anggota', 'Admin::update_data_anggota');
 $routes->get('/admin/hapus-data-anggota/(:alphanum)', 'Admin::hapus_data_anggota/$1');
 
+// Routes untuk module rak
+$routes->get('/admin/master-data-rak', 'Admin::master_data_rak');
+$routes->get('/admin/input-data-rak', 'Admin::input_data_rak');
+$routes->post('/admin/simpan-rak', 'Admin::simpan_data_rak');
+$routes->get('/admin/edit-data-rak/(:alphanum)', 'Admin::edit_data_rak/$1');
+$routes->post('/admin/update-rak', 'Admin::update_data_rak');
+$routes->get('/admin/hapus-data-rak/(:alphanum)', 'Admin::hapus_data_rak/$1');
