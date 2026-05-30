@@ -16,6 +16,11 @@
 						<span class="glyphicon glyphicon-share-alt"></span> Data Admin
 					</a>
 				</li>
+				<li>
+					<a href="<?= base_url('admin/master-data-anggota'); ?>">
+						<span class="glyphicon glyphicon-share-alt"></span> Data Anggota
+					</a>
+				</li>
 			</ul>
 		</li>
 		<li role="presentation" class="divider"></li>
