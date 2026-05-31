@@ -1086,7 +1086,7 @@ class Admin extends BaseController
                 <?php
             } else {
                 $dataAnggota = $modelAnggota->getDataAnggota(['id_anggota' => $idAnggota])->getRowArray();
-                $dataBuku    = $modelBuku->getDataBukuJoin()->getResultArray();
+                $dataBuku = $modelBuku->getDataBukuJoin(['tbl_buku.is_delete_buku' => '0'])->getResultArray();
 
                 $jumlahTemp  = $modelPeminjaman->getDataTemp(['id_anggota' => $idAnggota])->getNumRows();
                 $dataTemp    = $modelPeminjaman->getDataTempJoin(['tbl_temp_peminjaman.id_anggota' => $idAnggota])->getResultArray();
@@ -1239,6 +1239,36 @@ class Admin extends BaseController
             ?>
             <script>document.location = "<?= base_url('admin/data-transaksi-peminjaman');?>";</script>
             <?php
+        }
+    }
+
+    public function detail_peminjaman()
+    {
+        if(session()->get('ses_id')=='' or session()->get('ses_user')=='' or session()->get('ses_level')==''){
+            session()->setFlashdata('error','Silakan login terlebih dahulu!');
+            ?>
+            <script>document.location = "<?= base_url('admin/login-admin');?>";</script>
+            <?php
+        } else {
+            $modelPeminjaman = new PeminjamanModels();
+
+            $uri    = service('uri');
+            $idDetail = $uri->getSegment(3);
+
+            $dataPeminjaman = $modelPeminjaman->getDataPeminjamanJoin(['sha1(tbl_peminjaman.no_peminjaman)' => $idDetail])->getRowArray();
+            $dataDetail     = $modelPeminjaman->getDataDetail(['tbl_detail_peminjaman.no_peminjaman' => $dataPeminjaman['no_peminjaman']])->getResultArray();
+
+            $page = $uri->getSegment(2);
+
+            $data['page']           = $page;
+            $data['web_title']      = "Detail Peminjaman";
+            $data['dataPeminjaman'] = $dataPeminjaman;
+            $data['dataDetail']     = $dataDetail;
+
+            echo view('Backend/Template/header', $data);
+            echo view('Backend/Template/sidebar', $data);
+            echo view('Backend/Transaksi/detail-peminjaman', $data);
+            echo view('Backend/Template/footer', $data);
         }
     }
 

@@ -66,3 +66,4 @@ $routes->get('/admin/peminjaman-step-2', 'Admin::peminjaman_step2');
 $routes->get('/admin/simpan-temppinjam/(:alphanum)', 'Admin::simpan_temp_pinjam/$1');
 $routes->get('/admin/hapus-temp/(:alphanum)', 'Admin::hapus_peminjaman/$1');
 $routes->get('/admin/simpan-transaksi-peminjaman', 'Admin::simpan_transaksi_peminjaman');
+$routes->get('/admin/detail-peminjaman/(:alphanum)', 'Admin::detail_peminjaman/$1');

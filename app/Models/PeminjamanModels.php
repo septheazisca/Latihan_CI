@@ -113,4 +113,20 @@ class PeminjamanModels extends Model
         $builder = $this->db->table($this->tableTmp);
         return $builder->delete($where);
     }
+
+    public function getDataDetail($where = false)
+    {
+        if ($where === false) {
+            $builder = $this->db->table($this->tableDetail);
+            $builder->select('*');
+            $builder->join('tbl_buku','tbl_buku.id_buku = tbl_detail_peminjaman.id_buku','LEFT');
+            return $query = $builder->get();
+        } else {
+            $builder = $this->db->table($this->tableDetail);
+            $builder->select('*');
+            $builder->where($where);
+            $builder->join('tbl_buku','tbl_buku.id_buku = tbl_detail_peminjaman.id_buku','LEFT');
+            return $query = $builder->get();
+        }
+    }
 }
