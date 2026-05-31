@@ -9,6 +9,7 @@ class PeminjamanModels extends Model
     protected $table        = 'tbl_peminjaman';
     protected $tableTmp     = 'tbl_temp_peminjaman';
     protected $tableDetail  = 'tbl_detail_peminjaman';
+    protected $tablePengembalian = 'tbl_pengembalian';
 
     public function getDataPeminjaman($where = false)
     {
@@ -126,6 +127,32 @@ class PeminjamanModels extends Model
             $builder->select('*');
             $builder->where($where);
             $builder->join('tbl_buku','tbl_buku.id_buku = tbl_detail_peminjaman.id_buku','LEFT');
+            return $query = $builder->get();
+        }
+    }
+
+    public function saveDataPengembalian($data)
+    {
+        $builder = $this->db->table($this->tablePengembalian);
+        return $builder->insert($data);
+    }
+
+    public function getDataPengembalian($where = false)
+    {
+        if($where === false){
+            $builder = $this->db->table($this->tablePengembalian);
+            $builder->select('*');
+            $builder->join('tbl_peminjaman','tbl_peminjaman.no_peminjaman = tbl_pengembalian.no_peminjaman','LEFT');
+            $builder->join('tbl_buku','tbl_buku.id_buku = tbl_pengembalian.id_buku','LEFT');
+            $builder->join('tbl_admin','tbl_admin.id_admin = tbl_pengembalian.id_admin','LEFT');
+            return $query = $builder->get();
+        } else {
+            $builder = $this->db->table($this->tablePengembalian);
+            $builder->select('*');
+            $builder->where($where);
+            $builder->join('tbl_peminjaman','tbl_peminjaman.no_peminjaman = tbl_pengembalian.no_peminjaman','LEFT');
+            $builder->join('tbl_buku','tbl_buku.id_buku = tbl_pengembalian.id_buku','LEFT');
+            $builder->join('tbl_admin','tbl_admin.id_admin = tbl_pengembalian.id_admin','LEFT');
             return $query = $builder->get();
         }
     }

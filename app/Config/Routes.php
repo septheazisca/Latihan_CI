@@ -67,3 +67,5 @@ $routes->get('/admin/simpan-temppinjam/(:alphanum)', 'Admin::simpan_temp_pinjam/
 $routes->get('/admin/hapus-temp/(:alphanum)', 'Admin::hapus_peminjaman/$1');
 $routes->get('/admin/simpan-transaksi-peminjaman', 'Admin::simpan_transaksi_peminjaman');
 $routes->get('/admin/detail-peminjaman/(:alphanum)', 'Admin::detail_peminjaman/$1');
+$routes->get('/admin/data-pengembalian', 'Admin::data_pengembalian');
+$routes->get('/admin/proses-pengembalian/(:alphanum)', 'Admin::proses_pengembalian/$1');

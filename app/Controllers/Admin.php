@@ -1272,4 +1272,121 @@ class Admin extends BaseController
         }
     }
 
+    public function data_pengembalian()
+    {
+        if(session()->get('ses_id')=='' or session()->get('ses_user')=='' or session()->get('ses_level')==''){
+            session()->setFlashdata('error','Silakan login terlebih dahulu!');
+            ?>
+            <script>document.location = "<?= base_url('admin/login-admin');?>";</script>
+            <?php
+        } else {
+            $modelPeminjaman = new PeminjamanModels();
+
+            // Ambil data peminjaman yang masih berjalan
+            $dataPeminjaman = $modelPeminjaman->getDataPeminjamanJoin([
+                'tbl_peminjaman.status_transaksi' => 'Berjalan'
+            ])->getResultArray();
+
+            $uri  = service('uri');
+            $page = $uri->getSegment(2);
+
+            $data['page']           = $page;
+            $data['web_title']      = "Data Pengembalian";
+            $data['dataPeminjaman'] = $dataPeminjaman;
+
+            echo view('Backend/Template/header', $data);
+            echo view('Backend/Template/sidebar', $data);
+            echo view('Backend/Transaksi/data-pengembalian', $data);
+            echo view('Backend/Template/footer', $data);
+        }
+    }
+
+    public function proses_pengembalian()
+    {
+        if(session()->get('ses_id')=='' or session()->get('ses_user')=='' or session()->get('ses_level')==''){
+            session()->setFlashdata('error','Silakan login terlebih dahulu!');
+            ?>
+            <script>document.location = "<?= base_url('admin/login-admin');?>";</script>
+            <?php
+        } else {
+            $modelPeminjaman = new PeminjamanModels();
+            $modelBuku       = new BukuModels();
+
+            $uri          = service('uri');
+            $idPeminjaman = $uri->getSegment(3);
+
+            // Ambil data peminjaman
+            $dataPeminjaman = $modelPeminjaman->getDataPeminjamanJoin([
+                'sha1(tbl_peminjaman.no_peminjaman)' => $idPeminjaman
+            ])->getRowArray();
+
+            // Ambil semua detail buku yang dipinjam
+            $dataDetail = $modelPeminjaman->getDataDetail([
+                'tbl_detail_peminjaman.no_peminjaman' => $dataPeminjaman['no_peminjaman']
+            ])->getResultArray();
+
+            // Generate no pengembalian
+            $noPengembalian = "PEN".date("ymdHis");
+
+            // Proses setiap buku
+            foreach($dataDetail as $detail){
+
+                // Kembalikan stok buku
+                $dataBuku = $modelBuku->getDataBuku([
+                    'id_buku' => $detail['id_buku']
+                ])->getRowArray();
+
+                $stokBaru = $dataBuku['jumlah_eksemplar'] + 1;
+                $modelBuku->updateDataBuku(
+                    ['jumlah_eksemplar' => $stokBaru],
+                    ['id_buku' => $detail['id_buku']]
+                );
+
+                // Update status detail
+                $modelPeminjaman->updateDataDetail(
+                    ['status_pinjam' => 'Sudah Dikembalikan'],
+                    [
+                        'no_peminjaman' => $dataPeminjaman['no_peminjaman'],
+                        'id_buku'       => $detail['id_buku']
+                    ]
+                );
+
+                // Hitung denda jika terlambat
+                $tglKembali  = strtotime($detail['tgl_kembali']);
+                $tglSekarang = strtotime(date('Y-m-d'));
+                $selisih     = $tglSekarang - $tglKembali;
+                $hariTelat   = round($selisih / 86400);
+
+                // Denda Rp 1.000 per hari
+                if($hariTelat > 0){
+                    $denda = $hariTelat * 1000;
+                } else {
+                    $denda = 0;
+                }
+
+                // Simpan ke tbl_pengembalian
+                $dataSimpanKembali = [
+                    'no_pengembalian' => $noPengembalian,
+                    'no_peminjaman'   => $dataPeminjaman['no_peminjaman'],
+                    'id_buku'         => $detail['id_buku'],
+                    'denda'           => $denda,
+                    'tgl_pengembalian'=> date('Y-m-d'),
+                    'id_admin'        => session()->get('ses_id')
+                ];
+                $modelPeminjaman->saveDataPengembalian($dataSimpanKembali);
+            }
+
+            // Update status peminjaman jadi Selesai
+            $modelPeminjaman->updateDataPeminjaman(
+                ['status_transaksi' => 'Selesai'],
+                ['no_peminjaman' => $dataPeminjaman['no_peminjaman']]
+            );
+
+            session()->setFlashdata('success', 'Pengembalian Buku Berhasil Diproses!');
+            ?>
+            <script>document.location = "<?= base_url('admin/data-pengembalian');?>";</script>
+            <?php
+        }
+    }
+
 }

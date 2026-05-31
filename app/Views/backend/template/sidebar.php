@@ -49,6 +49,12 @@
             </a>
         </li>
 
+        <li>
+            <a href="<?= base_url('admin/data-pengembalian');?>">
+                <span class="glyphicon glyphicon-share-alt"></span> Pengembalian Buku
+            </a>
+        </li>
+
         <li role="presentation" class="divider"></li>
 
         <li>
