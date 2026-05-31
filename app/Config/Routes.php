@@ -6,54 +6,56 @@ use CodeIgniter\Router\RouteCollection;
  * @var RouteCollection $routes
  */
 
-
-// $routes->get('/', 'Home::index');
-$routes->get('/home/coba-parameter/(:alpha)/(:num)/(:alphanum)', 'Home::belajar_segment/$1/$2/$3');
-
+// HOME
 $routes->get('/', 'Admin::login');
 
-// Untuk admin
-$routes->get('admin/login-admin', 'Admin::login');
-$routes->post('admin/autentikasi-login', 'Admin::autentikasi');
-$routes->get('admin/logout', 'admin::logout');
-$routes->get('admin/dashboard-admin', 'Admin::dashboard');
 
-// Routes untuk module admin
-$routes->get('/admin/master-data-admin', 'Admin::master_data_admin');
-$routes->get('/admin/input-data-admin', 'Admin::input_data_admin');
-$routes->post('/admin/simpan-admin', 'Admin::simpan_data_admin');
-$routes->get('/admin/edit-data-admin/(:alphanum)', 'Admin::edit_data_admin/$1');
-$routes->post('/admin/update-admin', 'Admin::update_data_admin');
-$routes->get('/admin/hapus-data-admin/(:alphanum)', 'Admin::hapus_data_admin/$1');
+// AUTHENTICATION
+$routes->group('admin', function ($routes) {
 
-// Routes untuk module anggota
-$routes->get('/admin/master-data-anggota', 'Admin::master_data_anggota');
-$routes->get('/admin/input-data-anggota', 'Admin::input_data_anggota');
-$routes->post('/admin/simpan-anggota', 'Admin::simpan_data_anggota');
-$routes->get('/admin/edit-data-anggota/(:alphanum)', 'Admin::edit_data_anggota/$1');
-$routes->post('/admin/update-anggota', 'Admin::update_data_anggota');
-$routes->get('/admin/hapus-data-anggota/(:alphanum)', 'Admin::hapus_data_anggota/$1');
+    // Login & Logout
+    $routes->get('login-admin', 'Auth::login');
+    $routes->post('autentikasi-login', 'Auth::autentikasi');
+    $routes->get('logout', 'Auth::logout');
+    $routes->get('dashboard-admin', 'Auth::dashboard');
 
-// Routes untuk module rak
-$routes->get('/admin/master-data-rak', 'Admin::master_data_rak');
-$routes->get('/admin/input-data-rak', 'Admin::input_data_rak');
-$routes->post('/admin/simpan-rak', 'Admin::simpan_data_rak');
-$routes->get('/admin/edit-data-rak/(:alphanum)', 'Admin::edit_data_rak/$1');
-$routes->post('/admin/update-rak', 'Admin::update_data_rak');
-$routes->get('/admin/hapus-data-rak/(:alphanum)', 'Admin::hapus_data_rak/$1');
+    // DATA ADMIN
+    $routes->get('master-data-admin', 'Admin::master_data_admin');
+    $routes->get('input-data-admin', 'Admin::input_data_admin');
+    $routes->post('simpan-admin', 'Admin::simpan_data_admin');
+    $routes->get('edit-data-admin/(:alphanum)', 'Admin::edit_data_admin/$1');
+    $routes->post('update-admin', 'Admin::update_data_admin');
+    $routes->get('hapus-data-admin/(:alphanum)', 'Admin::hapus_data_admin/$1');
 
-// Routes untuk module kategori
-$routes->get('/admin/master-data-kategori', 'Admin::master_data_kategori');
-$routes->get('/admin/input-data-kategori', 'Admin::input_data_kategori');
-$routes->post('/admin/simpan-kategori', 'Admin::simpan_data_kategori');
-$routes->get('/admin/edit-data-kategori/(:alphanum)', 'Admin::edit_data_kategori/$1');
-$routes->post('/admin/update-kategori', 'Admin::update_data_kategori');
-$routes->get('/admin/hapus-data-kategori/(:alphanum)', 'Admin::hapus_data_kategori/$1');
+    // DATA ANGGOTA
+    $routes->get('master-data-anggota', 'Anggota::master_data_anggota');
+    $routes->get('input-data-anggota', 'Anggota::input_data_anggota');
+    $routes->post('simpan-anggota', 'Anggota::simpan_data_anggota');
+    $routes->get('edit-data-anggota/(:alphanum)', 'Anggota::edit_data_anggota/$1');
+    $routes->post('update-anggota', 'Anggota::update_data_anggota');
+    $routes->get('hapus-data-anggota/(:alphanum)', 'Anggota::hapus_data_anggota/$1');
 
-// Routes untuk module buku
-$routes->get('/admin/master-buku', 'Admin::master_buku');
-$routes->get('/admin/edit-buku/(:alphanum)', 'Admin::edit_buku/$1');
-$routes->post('/admin/update-buku', 'Admin::update_buku');
-$routes->get('/admin/hapus-buku/(:alphanum)', 'Admin::hapus_buku/$1');
-$routes->get('/admin/input-buku', 'Admin::input_buku');
-$routes->post('/admin/simpan-buku', 'Admin::simpan_buku');
+    // DATA RAK
+    $routes->get('master-data-rak', 'Rak::master_data_rak');
+    $routes->get('input-data-rak', 'Rak::input_data_rak');
+    $routes->post('simpan-rak', 'Rak::simpan_data_rak');
+    $routes->get('edit-data-rak/(:alphanum)', 'Rak::edit_data_rak/$1');
+    $routes->post('update-rak', 'Rak::update_data_rak');
+    $routes->get('hapus-data-rak/(:alphanum)', 'Rak::hapus_data_rak/$1');
+
+    // DATA KATEGORI
+    $routes->get('master-data-kategori', 'Kategori::master_data_kategori');
+    $routes->get('input-data-kategori', 'Kategori::input_data_kategori');
+    $routes->post('simpan-kategori', 'Kategori::simpan_data_kategori');
+    $routes->get('edit-data-kategori/(:alphanum)', 'Kategori::edit_data_kategori/$1');
+    $routes->post('update-kategori', 'Kategori::update_data_kategori');
+    $routes->get('hapus-data-kategori/(:alphanum)', 'Kategori::hapus_data_kategori/$1');
+
+    // DATA BUKU
+    $routes->get('master-buku', 'Buku::master_buku');
+    $routes->get('input-buku', 'Buku::input_buku');
+    $routes->post('simpan-buku', 'Buku::simpan_buku');
+    $routes->get('edit-buku/(:alphanum)', 'Buku::edit_buku/$1');
+    $routes->post('update-buku', 'Buku::update_buku');
+    $routes->get('hapus-buku/(:alphanum)', 'Buku::hapus_buku/$1');
+});

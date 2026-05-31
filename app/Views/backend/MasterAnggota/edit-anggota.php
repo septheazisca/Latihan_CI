@@ -54,6 +54,15 @@
                                 placeholder="Masukkan Email"
                                 value="<?php echo $data_anggota['email']; ?>" required>
                         </div>
+
+                        <div style="clear:both;"></div>
+
+                        <div class="form-group col-md-6">
+                            <label>Password</label>
+                            <input type="password" class="form-control" name="password" value="<?php echo $data_anggota['password_anggota']; ?>"
+                                placeholder="Masukkan Password" required>
+                        </div>
+
                         <div style="clear:both;"></div>
 
                         <div class="form-group col-md-6">

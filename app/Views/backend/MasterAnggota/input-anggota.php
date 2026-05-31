@@ -52,11 +52,6 @@
                         </div>
                         <div style="clear:both;"></div>
 
-                        <div class="form-group col-md-6">
-                            <label>Password</label>
-                            <input type="password" class="form-control" name="password"
-                                placeholder="Masukkan Password" required>
-                        </div>
                         <div style="clear:both;"></div>
 
                         <div class="form-group col-md-6">
