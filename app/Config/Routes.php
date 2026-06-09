@@ -57,4 +57,18 @@ $routes->group('admin', function ($routes) {
     $routes->get('edit-buku/(:alphanum)', 'Buku::edit_buku/$1');
     $routes->post('update-buku', 'Buku::update_buku');
     $routes->get('hapus-buku/(:alphanum)', 'Buku::hapus_buku/$1');
+
+    // TRANSAKSI PEMINJAMAN
+    $routes->get('data-transaksi-peminjaman', 'Peminjaman::data_transaksi_peminjaman');
+    $routes->get('peminjaman-step-1', 'Peminjaman::peminjaman_step1');
+    $routes->get('tes-qr', 'Peminjaman::tes_qr');
+    $routes->get('peminjaman-step-2', 'Peminjaman::peminjaman_step2');
+    $routes->post('peminjaman-step-2', 'Peminjaman::peminjaman_step2');
+    $routes->get('simpan-temp-pinjam/(:alphanum)', 'Peminjaman::simpan_temp_pinjam/$1');
+    $routes->get('hapus-temp/(:alphanum)', 'Peminjaman::hapus_peminjaman/$1');
+    $routes->get('simpan-transaksi-peminjaman', 'Peminjaman::simpan_transaksi_peminjaman');
+    $routes->get('detail-transaksi/(:segment)','Peminjaman::detail_transaksi/$1');
+    $routes->get('proses-pengembalian/(:segment)/(:segment)', 'Peminjaman::proses_pengembalian/$1/$2');
+    $routes->get('data-pengembalian', 'Peminjaman::data_pengembalian');
+
 });

@@ -33,6 +33,38 @@
 				</li>
 			</ul>
 		</li>
+
+		<li class="parent">
+			<a href="#sub-item-transaksi" data-toggle="collapse">
+				<span class="glyphicon glyphicon-transfer"></span>
+				Transaksi
+				<span class="icon pull-right">
+					<em class="glyphicon glyphicon-s glyphicon-plus"></em>
+				</span>
+			</a>
+			<ul class="children collapse" id="sub-item-transaksi">
+				<li>
+					<a href="<?= base_url('admin/peminjaman-step-1'); ?>">
+						<span class="glyphicon glyphicon-share-alt"></span>
+						Peminjaman Buku
+					</a>
+				</li>
+				<li>
+					<a href="<?= base_url('admin/data-transaksi-peminjaman');
+								?>">
+						<span class="glyphicon glyphicon-list-alt"></span>
+						Data Transaksi
+					</a>
+				</li>
+				<li>
+					<a href="<?= base_url('admin/data-pengembalian'); ?>">
+						<span class="glyphicon glyphicon-repeat"></span>
+						Data Pengembalian
+					</a>
+				</li>
+			</ul>
+		</li>
+
 		<li><a href="<?= base_url('admin/master-buku'); ?>">
 				<span class="glyphicon glyphicon-book"></span> Data Buku</a>
 		<li role="presentation" class="divider"></li>

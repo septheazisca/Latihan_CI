@@ -7,21 +7,38 @@ use CodeIgniter\Model;
 class anggotaModels extends Model
 {
     protected $table = 'tbl_anggota';
-
+    protected $primaryKey = 'id_anggota';
+    protected $allowedFields = [
+        'id_anggota',
+        'nama_anggota',
+        'jenis_kelamin',
+        'no_telp',
+        'alamat',
+        'email',
+        'password_anggota',
+        'is_delete_anggota',
+        'created_at',
+        'updated_at'
+    ];
+    // Ambil semua anggota (untuk dropdown)
     public function getDataAnggota($where = false)
     {
         if ($where === false) {
-            $builder = $this->db->table($this->table);
-            $builder->select('*');
-            $builder->orderBy('nama_anggota', 'ASC');
-            return $query = $builder->get();
+            return $this->findAll(); // 🔥 pakai ini dulu
         } else {
-            $builder = $this->db->table($this->table);
-            $builder->select('*');
-            $builder->where($where);
-            $builder->orderBy('nama_anggota', 'ASC');
-            return $query = $builder->get();
+            return $this->where($where)->first();
         }
+    }
+    // Search anggota (optional untuk Select2 AJAX)
+    public function searchAnggota($keyword)
+    {
+        return $this->groupStart()
+            ->like('id_anggota', $keyword)
+            ->orLike('nama_anggota', $keyword)
+            ->groupEnd()
+            ->where('is_delete_anggota', 0)
+            ->orderBy('nama_anggota', 'ASC')
+            ->findAll();
     }
 
     public function saveDataAnggota($data)

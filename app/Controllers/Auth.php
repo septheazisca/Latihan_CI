@@ -16,21 +16,43 @@ class Auth extends BaseController
     public function dashboard()
     {
         if (
-            session()->get('ses_id') == "" or
-            session()->get('ses_user') == "" or
+            session()->get('ses_id') == "" ||
+            session()->get('ses_user') == "" ||
             session()->get('ses_level') == ""
         ) {
-            session()->setFlashdata('error', 'Silakan login terlebih dahulu!');
-            ?>
+
+            session()->setFlashdata(
+                'error',
+                'Silakan login terlebih dahulu!'
+            );
+        ?>
             <script>
                 document.location = "<?= base_url('admin/login-admin'); ?>";
             </script>
         <?php
         } else {
-            echo view('Backend/Template/header');
-            echo view('Backend/Template/sidebar');
-            echo view('Backend/Login/dashboard_admin');
-            echo view('Backend/Template/footer');
+
+            $db = \Config\Database::connect();
+
+            $data['total_buku'] = $db->table('tbl_buku')
+                ->where('is_delete_buku', '0')
+                ->countAllResults();
+
+            $data['total_anggota'] = $db->table('tbl_anggota')
+                ->where('is_delete_anggota', '0')
+                ->countAllResults();
+
+            $data['total_peminjaman'] = $db->table('tbl_peminjaman')
+                ->countAllResults();
+
+            $data['peminjaman_berjalan'] = $db->table('tbl_peminjaman')
+                ->where('status_transaksi', 'Berjalan')
+                ->countAllResults();
+
+            echo view('Backend/Template/header', $data);
+            echo view('Backend/Template/sidebar', $data);
+            echo view('Backend/Login/dashboard_admin', $data);
+            echo view('Backend/Template/footer', $data);
         }
     }
 
@@ -97,6 +119,6 @@ class Auth extends BaseController
         <script>
             document.location = "<?= base_url('admin/login-admin'); ?>";
         </script>
-        <?php
+<?php
     }
 }

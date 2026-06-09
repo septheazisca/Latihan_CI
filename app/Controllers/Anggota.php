@@ -12,16 +12,20 @@ class Anggota extends BaseController
     {
         if (session()->get('ses_id') == "" or session()->get('ses_user') == "" or session()->get('ses_level') == "") {
             session()->setFlashdata('error', 'Silakan login terlebih dahulu!');
-            ?>
-            <script>document.location = "<?= base_url('admin/login-admin'); ?>";</script>
-            <?php
+?>
+            <script>
+                document.location = "<?= base_url('admin/login-admin'); ?>";
+            </script>
+        <?php
         } else {
             $modelAnggota = new anggotaModels();
             $uri   = service('uri');
             $pages = $uri->getSegment(2);
 
-            $dataAnggota = $modelAnggota->getDataAnggota(['is_delete_anggota' => '0'])->getResultArray();
-
+            $dataAnggota = $modelAnggota->where([
+                'is_delete_anggota' => '0'
+            ])->findAll();
+            
             $data['pages']        = $pages;
             $data['data_anggota'] = $dataAnggota;
 
@@ -36,9 +40,11 @@ class Anggota extends BaseController
     {
         if (session()->get('ses_id') == "" or session()->get('ses_user') == "" or session()->get('ses_level') == "") {
             session()->setFlashdata('error', 'Silakan login terlebih dahulu!');
-            ?>
-            <script>document.location = "<?= base_url('admin/login-admin'); ?>";</script>
-            <?php
+        ?>
+            <script>
+                document.location = "<?= base_url('admin/login-admin'); ?>";
+            </script>
+        <?php
         } else {
             echo view('Backend/Template/header');
             echo view('Backend/Template/sidebar');
@@ -51,9 +57,11 @@ class Anggota extends BaseController
     {
         if (session()->get('ses_id') == "" or session()->get('ses_user') == "" or session()->get('ses_level') == "") {
             session()->setFlashdata('error', 'Silakan login terlebih dahulu!');
-            ?>
-            <script>document.location = "<?= base_url('admin/login-admin'); ?>";</script>
-            <?php
+        ?>
+            <script>
+                document.location = "<?= base_url('admin/login-admin'); ?>";
+            </script>
+        <?php
         } else {
             $modelAnggota = new anggotaModels();
 
@@ -63,7 +71,7 @@ class Anggota extends BaseController
             $alamat      = $this->request->getPost('alamat');
             $email       = $this->request->getPost('email');
             // $password    = $this->request->getPost('password');
-            
+
 
             $hasil = $modelAnggota->autoNumber()->getRowArray();
             if (!$hasil) {
@@ -83,16 +91,18 @@ class Anggota extends BaseController
                 'alamat'           => $alamat,
                 'email'            => $email,
                 'password_anggota' => password_hash('pass_anggota', PASSWORD_DEFAULT),
-                'is_delete_anggota'=> '0',
+                'is_delete_anggota' => '0',
                 'created_at'       => date('Y-m-d H:i:s'),
                 'updated_at'       => date('Y-m-d H:i:s')
             ];
 
             $modelAnggota->saveDataAnggota($dataSimpan);
             session()->setFlashdata('success', 'Data Anggota Berhasil Ditambahkan!!');
-            ?>
-            <script>document.location = "<?= base_url('admin/master-data-anggota'); ?>";</script>
-            <?php
+        ?>
+            <script>
+                document.location = "<?= base_url('admin/master-data-anggota'); ?>";
+            </script>
+        <?php
         }
     }
 
@@ -132,7 +142,7 @@ class Anggota extends BaseController
             'no_tlp'        => $no_tlp,
             'alamat'        => $alamat,
             'email'         => $email,
-            'password_anggota'=> password_hash($password, PASSWORD_DEFAULT),
+            'password_anggota' => password_hash($password, PASSWORD_DEFAULT),
             'updated_at'    => date("Y-m-d H:i:s")
         ];
         $whereUpdate = ['id_anggota' => $idUpdate];
@@ -141,8 +151,10 @@ class Anggota extends BaseController
         session()->remove('idUpdateAnggota');
         session()->setFlashdata('success', 'Data Anggota Berhasil Diperbaharui!');
         ?>
-        <script>document.location = "<?= base_url('admin/master-data-anggota'); ?>";</script>
-        <?php
+        <script>
+            document.location = "<?= base_url('admin/master-data-anggota'); ?>";
+        </script>
+    <?php
     }
 
     public function hapus_data_anggota()
@@ -156,8 +168,10 @@ class Anggota extends BaseController
 
         $modelAnggota->updateDataAnggota($dataUpdate, $whereUpdate);
         session()->setFlashdata('success', 'Data Anggota Berhasil Dihapus!');
-        ?>
-        <script>document.location = "<?= base_url('admin/master-data-anggota'); ?>";</script>
-        <?php
+    ?>
+        <script>
+            document.location = "<?= base_url('admin/master-data-anggota'); ?>";
+        </script>
+<?php
     }
 }
