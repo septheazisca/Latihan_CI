@@ -7,8 +7,7 @@ use CodeIgniter\Router\RouteCollection;
  */
 
 // HOME
-$routes->get('/', 'Admin::login');
-
+$routes->get('/', 'Homepage::index');
 
 // AUTHENTICATION
 $routes->group('admin', function ($routes) {
