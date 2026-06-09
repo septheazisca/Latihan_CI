@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Controllers\BaseController;
 use CodeIgniter\HTTP\ResponseInterface;
 use App\Models\adminModels;
+use App\Models\PeminjamanModels;
 
 class Auth extends BaseController
 {
@@ -65,6 +66,14 @@ class Auth extends BaseController
             }
 
             $data['grafikPinjam'] = array_values($dataBulanan);
+
+            $modelPeminjaman = new PeminjamanModels();
+
+            $data['peminjamanBerjalan'] = $modelPeminjaman
+                ->getDataPeminjamanJoin([
+                    'status_transaksi' => 'Berjalan'
+                ])
+                ->getResultArray();
 
             echo view('Backend/Template/header', $data);
             echo view('Backend/Template/sidebar', $data);
