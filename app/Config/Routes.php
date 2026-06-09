@@ -11,7 +11,6 @@ $routes->get('/', 'Homepage::index');
 
 // AUTHENTICATION
 $routes->group('admin', function ($routes) {
-
     // Login & Logout
     $routes->get('login-admin', 'Auth::login');
     $routes->post('autentikasi-login', 'Auth::autentikasi');
@@ -67,8 +66,21 @@ $routes->group('admin', function ($routes) {
     $routes->get('simpan-temp-pinjam/(:alphanum)', 'Peminjaman::simpan_temp_pinjam/$1');
     $routes->get('hapus-temp/(:alphanum)', 'Peminjaman::hapus_peminjaman/$1');
     $routes->get('simpan-transaksi-peminjaman', 'Peminjaman::simpan_transaksi_peminjaman');
-    $routes->get('detail-transaksi/(:segment)','Peminjaman::detail_transaksi/$1');
+    $routes->get('detail-transaksi/(:segment)', 'Peminjaman::detail_transaksi/$1');
     $routes->get('proses-pengembalian/(:segment)/(:segment)', 'Peminjaman::proses_pengembalian/$1/$2');
     $routes->get('data-pengembalian', 'Peminjaman::data_pengembalian');
+});
 
+
+$routes->group('anggota', function ($routes) {
+    // Login & Logout
+    $routes->get('login', 'UserAnggota::login');
+    $routes->post('autentikasi-login', 'UserAnggota::autentikasi');
+    $routes->get('logout', 'UserAnggota::logout');
+    $routes->get('dashboard', 'UserAnggota::dashboard');
+    $routes->get('daftar-buku', 'UserAnggota::daftar_buku');
+    $routes->get('profile', 'UserAnggota::profile');
+    $routes->get('settings', 'UserAnggota::settings');
+    $routes->post('update-profile', 'UserAnggota::update_profile');
+    $routes->post('update-password', 'UserAnggota::update_password');
 });
