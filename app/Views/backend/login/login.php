@@ -1,74 +1,130 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aplikasi Perpustakaan Berbasis Web</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Login Anggota Perpustakaan</title>
+    <link href="<?= base_url('Assets/css/bootstrap.min.css'); ?>"
+        rel="stylesheet">
+    <link href="<?= base_url('Assets/css/sweetalert2.min.css'); ?>"
+        rel="stylesheet">
+    <style>
+        body {
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            /* background perpustakaan */
+            background: url('https://images.unsplash.com/photo-1524995997946-a1c2e315a42f') no-repeat center center;
+                    background-size: cover;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    position: relative;
+            }
 
-    <link href="<?php echo base_url('assets/css/bootstrap.min.css'); ?>" rel="stylesheet">
-    <link href="<?php echo base_url('assets/css/datepicker3.css'); ?>" rel="stylesheet">
-    <link href="<?php echo base_url('assets/css/bootstrap-table.css'); ?>" rel="stylesheet">
-    <link href="<?php echo base_url('assets/css/styles.css'); ?>" rel="stylesheet">
-    <link href="<?php echo base_url('assets/css/sweetalert2.min.css'); ?>" rel="stylesheet">
+            /* overlay gelap biar tulisan jelas */
+            body::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.55);
+            }
+
+            .login-card {
+                position: relative;
+                background: rgba(255, 255, 255, 0.95);
+                padding: 30px;
+                border-radius: 15px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+                width: 100%;
+                max-width: 380px;
+                z-index: 1;
+            }
+
+            .login-title {
+                text-align: center;
+                font-weight: bold;
+                margin-bottom: 20px;
+                font-size: 18px;
+                color: #333;
+            }
+
+            .form-control {
+                border-radius: 8px;
+                height: 45px;
+            }
+
+            .btn-login {
+                border-radius: 8px;
+                height: 45px;
+                font-weight: bold;
+                background: #2e7d32;
+                border: none;
+                transition: 0.3s;
+            }
+
+            .btn-login:hover {
+                background: #1b5e20;
+            }
+
+            .footer-text {
+                text-align: center;
+                margin-top: 15px;
+                font-size: 12px;
+                color: #666;
+            }
+    </style>
 </head>
 
 <body>
-
-    <div class="row">
-        <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2 col-md-4 col-md-offset-4">
-            <div class="login-panel panel panel-default">
-                <div class="panel-heading">Log in</div>
-                <div class="panel-body">
-                    <form role="form" action="<?= base_url('/admin/autentikasi-login');?>"  method="post">
-                        <fieldset>
-                            <div class="form-group">
-                                <input class="form-control" placeholder="Username" name="username" type="text" autofocus="">
-                            </div>
-                            <div class="form-group">
-                                <input class="form-control" placeholder="Password" name="password" type="password" value="">
-                            </div>
-                            <div class="checkbox">
-                                <label>
-                                    <input name="remember" type="checkbox" value="Remember Me">Remember Me
-                                </label>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Login</button>
-                        </fieldset>
-                    </form>
-                </div>
+    <div class="login-card">
+        <div class="login-title">
+            📚 Login Anggota Perpustakaan
+        </div>
+        <form action="<?= base_url('admin/autentikasi-login'); ?>" method="post">
+            <div class="form-group">
+                <input class="form-control"
+                    placeholder="Username"
+                    name="username"
+                    type="text"
+                    required autofocus>
             </div>
-        </div><!-- /.col-->
-    </div><!-- /.row -->
-
-
-
-    <script src="assets/js/jquery-1.11.1.min.js"></script>
-    <script src="assets/js/bootstrap.min.js"></script>
-    <script src="assets/js/chart.min.js"></script>
-    <script src="assets/js/chart-data.js"></script>
-    <script src="assets/js/easypiechart.js"></script>
-    <script src="assets/js/easypiechart-data.js"></script>
-    <script src="assets/js/bootstrap-datepicker.js"></script>
-    <script src="assets/js/bootstrap-table.js"></script>
-    <script src="assets/js/sweetalert2.min.css"></script>
-
-    <script>
-        ! function($) {
-            $(document).on("click", "ul.nav li.parent > a > span.icon", function() {
-                $(this).find('em:first').toggleClass("glyphicon-minus");
+            <div class="form-group">
+                <input class="form-control"
+                    placeholder="Password"
+                    name="password"
+                    type="password"
+                    required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-login btn-block">
+                Login
+            </button>
+        </form>
+        <div class="footer-text">
+            Silakan login untuk masuk ke sistem
+        </div>
+    </div>
+    <script src="<?= base_url('Assets/js/jquery-1.11.1.min.js'); ?>"></script>
+    <script src="<?= base_url('Assets/js/bootstrap.min.js'); ?>"></script>
+    <script src="<?= base_url('Assets/js/sweetalert2.min.js'); ?>"></script>
+    <?php if (session()->getFlashdata('success')): ?>
+        <script>
+            $(document).ready(function() {
+                swal("Success!", "<?= session()->getFlashdata('success'); ?>", "success");
             });
-            $(".sidebar span.icon").find('em:first').addClass("glyphicon-plus");
-        }(window.jQuery);
-
-        $(window).on('resize', function() {
-            if ($(window).width() > 768) $('#sidebar-collapse').collapse('show')
-        })
-        $(window).on('resize', function() {
-            if ($(window).width() <= 767) $('#sidebar-collapse').collapse('hide')
-        })
-    </script>
-</body>
+        </script>
+    <?php endif; ?>
+    <?php if (session()->getFlashdata('error')): ?>
+        <script>
+            $(document).ready(function() {
+                swal("Error!", "<?= session()->getFlashdata('error'); ?>", "error");
+            });
+        </script>
+    <?php endif; ?>
 </body>
 
 </html>
