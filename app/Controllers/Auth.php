@@ -25,7 +25,7 @@ class Auth extends BaseController
                 'error',
                 'Silakan login terlebih dahulu!'
             );
-        ?>
+?>
             <script>
                 document.location = "<?= base_url('admin/login-admin'); ?>";
             </script>
@@ -48,6 +48,23 @@ class Auth extends BaseController
             $data['peminjaman_berjalan'] = $db->table('tbl_peminjaman')
                 ->where('status_transaksi', 'Berjalan')
                 ->countAllResults();
+
+            $grafik = $db->query("
+                SELECT
+                    MONTH(tgl_pinjam) as bulan,
+                    COUNT(*) as total
+                FROM tbl_peminjaman
+                WHERE YEAR(tgl_pinjam) = YEAR(CURDATE())
+                GROUP BY MONTH(tgl_pinjam)
+            ")->getResultArray();
+
+            $dataBulanan = array_fill(1, 12, 0);
+
+            foreach ($grafik as $row) {
+                $dataBulanan[$row['bulan']] = $row['total'];
+            }
+
+            $data['grafikPinjam'] = array_values($dataBulanan);
 
             echo view('Backend/Template/header', $data);
             echo view('Backend/Template/sidebar', $data);
